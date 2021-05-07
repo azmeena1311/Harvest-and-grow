@@ -14,7 +14,6 @@ from plant_predict import disease_predict
 
 import pandas as pd
 from fertilizer import fertilizer_dic
-import config
 import requests
 
 
@@ -31,43 +30,19 @@ model_plant = load_model('model_plant_disease.h5')
 def home():
     return render_template('index.html')
 
-def weather_fetch(city_name):
-    """
-    Fetch and returns the temperature and humidity of a city
-    :params: city_name
-    :return: temperature, humidity
-    """
-    api_key = config.weather_api_key
-    base_url = "http://api.openweathermap.org/data/2.5/weather?"
 
-    complete_url = base_url + "appid=" + api_key + "&q=" + city_name
-    response = requests.get(complete_url)
-    x = response.json()
 
-    if x["cod"] != "404":
-        y = x["main"]
-
-        temperature = round((y["temp"] - 273.15), 2)
-        humidity = y["humidity"]
-        return temperature, humidity
-    else:
-        return None
-
-@app.route('/crop_recommend')
-def crop_recommend():
-    return render_template('crop_recommennd.html')
+@app.route('/fertilizer_recommend')
+def fertilizer_recommennd():
+    return render_template('fertilizer_recommend.html')
 
 @app.route('/fert_recommend',methods=['POST','GET'])
 def fert_recommend():
-    city = str(request.form["city"])
+    
     crop_name = str(request.form['cropname'])
     N = int(request.form['nitrogen'])
     P = int(request.form['phosphorous'])
     K = int(request.form['pottasium'])
-
-
-    temperature, humidity = weather_fetch(city)
-
     df = pd.read_csv('Data/fertilizer.csv')
 
     nr = df[df['Crop'] == crop_name]['N'].iloc[0]
@@ -97,7 +72,7 @@ def fert_recommend():
             key = "Klow"
 
     response = Markup(str(fertilizer_dic[key]))
-    return render_template('fertilizer-result.html', recommendation=response, temp = temperature,hum=humidity)
+    return render_template('fertilizer-result.html', recommendation=response)
 
 
 @app.route('/plant_disease')
