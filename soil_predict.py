@@ -2,7 +2,7 @@
 from tensorflow.keras.preprocessing import image
 import numpy as np
 import os
-
+from flask import Markup
 # Keras
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
@@ -20,13 +20,13 @@ def model_predict(img_path, model):
     result = np.argmax(model.predict(test_image),axis=1)
 
     if result[0] == 0:
-        result =  crop_recommend['Alluvial Soil']
+        result =  Markup(str(crop_recommend['Alluvial Soil']))
     elif result[0] == 1:
-        result = "Black Soil"
+        result = Markup(str(crop_recommend["Black Soil"]))
     elif result[0] == 2:
-        result = "Clay Soil"
+        result =  Markup(str(crop_recommend["Clay Soil"]))
     elif result[0] == 3:
-        result = "Red Soil"
+        result =  Markup(str(crop_recommend["Red Soil"]))
     
 
 
